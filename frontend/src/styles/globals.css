@@ -16,6 +16,11 @@ body > div {
   --content-width: 90vw;
 }
 
+/* Work Around! Don't Delete */
+.layout > div {
+  height: 100%;
+}
+
 html.dark {
   color-scheme: dark;
 }

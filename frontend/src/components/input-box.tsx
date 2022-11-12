@@ -4,9 +4,10 @@ type Props = {
   className?: string;
   placeholder?: string;
   onChange?: ChangeEventHandler<HTMLInputElement>;
+  onEnter?: () => void;
 };
 
-const InputBox = ({ className, placeholder, onChange }: Props) => {
+const InputBox = ({ className, placeholder, onChange, onEnter }: Props) => {
   return (
     <input
       type={'email'}
@@ -15,6 +16,9 @@ const InputBox = ({ className, placeholder, onChange }: Props) => {
       }`}
       placeholder={placeholder || "Sample text"}
       onChange={onChange}
+      onKeyUp={(e) => {
+        if (e.key === 'Enter') onEnter && onEnter();
+      }}
     />
   );
 };

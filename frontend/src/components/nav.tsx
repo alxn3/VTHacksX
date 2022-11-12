@@ -17,8 +17,8 @@ const links: { name: string; url: string }[] = [
     url: '/about',
   },
   {
-    name: 'Demo [Soon!]',
-    url: '',
+    name: 'Demo',
+    url: '/demo',
   },
   {
     name: 'Survey',
@@ -38,7 +38,7 @@ const Nav = () => {
 
   return (
     <>
-      <GradientText className="absolute py-4 text-4xl">Artscaper</GradientText>
+      <GradientText className="absolute py-4 text-4xl"><Link href="/">Artscaper</Link></GradientText>
       <nav className="fixed py-4 text-4xl right-[calc((100%-min(var(--content-width),var(--max-content-width)))/2)] z-50">
         <div
           className={`w-full h-full fixed top-0 right-0 backdrop-blur-sm transition-all duration-500 ${

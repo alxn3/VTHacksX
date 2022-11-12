@@ -1,18 +1,17 @@
 'use client';
 
-import type { NextPage } from 'next';
 import Head from 'next/head';
-import BleedContainer from '@components/bleed-container';
-import GradientOutlineButton from '@components/gradient-outline-button';
-import GradientText from '@components/gradient-text';
-import Nav from '@components/nav';
+import BleedContainer from 'components/bleed-container';
+import GradientOutlineButton from 'components/gradient-outline-button';
+import GradientText from 'components/gradient-text';
+import Nav from 'components/nav';
 
 import { IoRocketSharp } from 'react-icons/io5';
 import { GrGraphQl } from 'react-icons/gr';
 import { MdLibraryBooks } from 'react-icons/md';
-import InputBox from '@components/input-box';
+import InputBox from 'components/input-box';
 
-import { Axios, db } from 'src/firebase/firebaseConfig';
+import { db } from 'firebase/firebaseConfig';
 import { useState } from 'react';
 import {
   getFirestore,
@@ -23,7 +22,7 @@ import {
 } from 'firebase/firestore';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Socials from '@components/socials';
+import Socials from 'components/socials';
 
 const regexExp =
   /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi;
@@ -96,9 +95,9 @@ const Landing = () => {
   };
 
   return (
-    <div className="h-full w-[min(var(--content-width),var(--max-content-width))] mx-auto text-[max(min(min(2vw,calc(var(--max-content-width)*0.02)),1.7em),1.5em)]">
+    <div className="h-full text-[max(min(min(2vw,calc(var(--max-content-width)*0.02)),1.7em),1.5em)]">
       <ToastContainer
-        bodyClassName={() => ' font-gray-300 text-[0.8em] font-light block'}
+        bodyClassName={'font-gray-300 text-[0.8em] font-light block'}
         toastClassName={'cursor-pointer relative justify-center flex-auto'}
       />
       <Head>
