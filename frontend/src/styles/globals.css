@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+body > div {
+  height: 100%;
+}
+
+:root {
+  --color-primary: 267;
+  --color-secondary: 198;
+  --color-accent: 160;
+  --max-content-width: 90rem;
+  --content-width: 90vw;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+body {
+  @apply transition-colors bg-white dark:bg-black text-slate-800/80 dark:text-slate-100/80;
+}
