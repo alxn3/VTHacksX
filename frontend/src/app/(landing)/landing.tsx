@@ -23,6 +23,7 @@ import {
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Socials from 'components/socials';
+import Footer from 'components/footer';
 
 const regexExp =
   /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi;
@@ -107,7 +108,7 @@ const Landing = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Nav />
-      <div className="min-h-full" id="hero">
+      <section className="min-h-screen" id="hero">
         <div className="flex flex-col items-center justify-center min-h-full gap-16 py-20 md:gap-5 md:flex-row">
           <div className="space-y-12 md:flex-2 md:max-w-[70%]">
             {/* TODO: Make Text Responsive */}
@@ -171,7 +172,7 @@ const Landing = () => {
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Mission statement section */}
       <BleedContainer className="w-[90%] md:w-[70%] mx-auto justify-center items-center text-[0.9em] y-20 text-center">
@@ -266,19 +267,6 @@ const Landing = () => {
           </div>
         </div>
       </div>
-
-      <BleedContainer className="pt-16 pb-20 flex items-center flex-col gap-6 text-[1.1em] text-center">
-        <p>
-          Start growing your art journey through <strong>Artscaper</strong>.
-        </p>
-        <GradientOutlineButton className="font-semilight border-1 text-[0.7em]">
-          <a href={'#hero'}>Join the waitlist</a>
-        </GradientOutlineButton>
-        <Socials
-          containerClassName="text-[1.3em]"
-          iconClassName="text-primary-300 hover:text-secondary-100 dark:text-primary-300/70 dark:hover:text-secondary-100 transition-all"
-        />
-      </BleedContainer>
       {/* Add a twitter/social section, maybe in footer? */}
     </div>
   );

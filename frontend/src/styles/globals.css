@@ -3,9 +3,12 @@
 @tailwind utilities;
 
 html,
-body,
-body > div {
+body {
   height: 100%;
+}
+
+body > div {
+  min-height: 100%;
 }
 
 :root {

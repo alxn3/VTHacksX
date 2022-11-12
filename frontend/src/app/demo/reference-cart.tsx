@@ -39,12 +39,12 @@ const ReferenceCart = ({ onImageClick }: Props) => {
           open ? 'block' : 'hidden'
         }`}
       >
-        <div className="grid grid-cols-3 select-none max-h-[70vh] overflow-y-auto">
+        <div className="grid grid-cols-3 select-none max-h-[70vh] overflow-y-auto gap-1">
           <ReferenceContext.Consumer>
             {({ selectedImages, setSelectedImages }) =>
               Object.keys(selectedImages).length ? (
                 Object.values(selectedImages).map((img, i) => (
-                  <div key={i} className="w-20 h-20 relative">
+                  <div key={i} className="w-20 h-20 relative rounded-md overflow-hidden">
                     <div
                       className="absolute right-0 top-0 p-2 bg-black w-4 h-4 m-1 hover:bg-red-500"
                       onClick={() => {
