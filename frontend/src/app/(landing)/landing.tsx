@@ -10,9 +10,9 @@ import { IoRocketSharp } from 'react-icons/io5';
 import { GrGraphQl } from 'react-icons/gr';
 import { MdLibraryBooks } from 'react-icons/md';
 import InputBox from 'components/input-box';
-
-import { db } from 'firebase/firebaseConfig';
 import { useState } from 'react';
+
+// import { db } from 'firebase/firebaseConfig';
 import {
   getFirestore,
   collection,
@@ -27,7 +27,8 @@ import Socials from 'components/socials';
 const regexExp =
   /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi;
 
-const emailsRef = collection(db, 'waitlist-emails');
+// const emailsRef = collection(db, 'waitlist-emails');
+const emailsRef = undefined;
 
 const Landing = () => {
   const [email, setEmail] = useState('');

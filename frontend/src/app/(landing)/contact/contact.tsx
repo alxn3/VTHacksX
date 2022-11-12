@@ -2,10 +2,10 @@
 
 import Head from 'next/head';
 import React from 'react';
-import BleedContainer from '@components/bleed-container';
-import GradientOutlineButton from '@components/gradient-outline-button';
-import Nav from '@components/nav';
-import Socials from '@components/socials';
+import BleedContainer from 'components/bleed-container';
+import GradientOutlineButton from 'components/gradient-outline-button';
+import Nav from 'components/nav';
+import Socials from 'components/socials';
 
 const Contact = () => {
     return (
