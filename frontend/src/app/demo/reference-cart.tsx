@@ -27,12 +27,12 @@ const ReferenceCart = ({ onImageClick }: Props) => {
   }, [ref]);
 
   return (
-    <div className={`flex flex-col border-[1px] items-end ${open ? 'bg-black rounded-lg border-white -m-4 p-4' : 'border-transparent'}`} ref={ref}>
+    <div className={`flex flex-col border-[1px] items-end ${open ? 'bg-white dark:bg-black rounded-lg border-black dark:border-white -m-4 p-4' : 'border-transparent'}`} ref={ref}>
       <div
-        className="py-2 px-4 rounded-md bg-black border-white border-[1px]"
+        className="py-2 px-4 rounded-md bg-white dark:bg-black border-dark dark:border-white border-[1px] cursor-pointer"
         onClick={() => setOpen(!open)}
       >
-        Hello
+        Images
       </div>
       <div
         className={`p-4 ${
@@ -44,9 +44,9 @@ const ReferenceCart = ({ onImageClick }: Props) => {
             {({ selectedImages, setSelectedImages }) =>
               Object.keys(selectedImages).length ? (
                 Object.values(selectedImages).map((img, i) => (
-                  <div key={i} className="w-20 h-20 relative rounded-md overflow-hidden">
+                  <div key={i} className="w-20 h-20 relative rounded-md overflow-hidden border-2 border-black">
                     <div
-                      className="absolute right-0 top-0 p-2 bg-black w-4 h-4 m-1 hover:bg-red-500"
+                      className="absolute right-0 top-0 p-2 bg-black w-4 h-4 m-1 hover:bg-red-500 cursor-pointer"
                       onClick={() => {
                         setSelectedImages((prev) => {
                           delete prev[img.id];

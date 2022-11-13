@@ -3,6 +3,7 @@
 import GradientOutlineButton from 'components/gradient-outline-button';
 import GradientText from 'components/gradient-text';
 import InputBox from 'components/input-box';
+import Nav from 'components/nav';
 import { ReferenceContext, ReferenceProvider } from 'context/reference-context';
 import { useContext, useEffect, useState } from 'react';
 import { ImageData } from 'types/image-data';
@@ -28,8 +29,16 @@ const Demo = () => {
 
   useEffect(() => console.log(images), [images]);
 
-  const processPhrase = () => {
-    setPhrases(search.split(' '));
+  const processPhrase = async () => {
+    const res = await fetch('/api/query', {
+      method: 'POST',
+      body: JSON.stringify({ query: search }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    const data = await res.json();
+    setPhrases(data);
   };
 
   useEffect(() => {
@@ -46,7 +55,7 @@ const Demo = () => {
             num_images: 200,
             modality: 'image',
             deduplicate: true,
-            aesthetic_score: 8,
+            aesthetic_score: 6.5,
             aesthetic_weight: 0.5,
             use_violence_detector: true,
             use_safety_model: true,
@@ -64,6 +73,9 @@ const Demo = () => {
 
   return (
     <ReferenceProvider>
+      <div className="w-[min(var(--content-width),var(--max-content-width))] mx-auto">
+        <Nav />
+      </div>
       <div className="w-[min(var(--content-width),var(--max-content-width))] min-h-screen mx-auto">
         <div className="flex flex-col items-center justify-center p-4">
           <GradientText className="mx-auto text-[5em] font-extrabold text-center font-bold my-[25vh]">
