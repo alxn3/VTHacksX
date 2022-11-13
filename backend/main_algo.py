@@ -140,7 +140,9 @@ def heuristic_adjustment(all_phrases):
 
     for i in range(len(all_phrases)):
         phrase, capitals, length = all_phrases[i]
-        cap_add = MAX_CAPITAL * (capitals / capital_total)
+        cap_add = 0
+        if capital_total > 0:
+            cap_add = MAX_CAPITAL * (capitals / capital_total)
         len_add = MAX_LENGTH * (length / length_total)
         all_phrases[i] = (phrase, cap_add + len_add)
     
