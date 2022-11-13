@@ -6,7 +6,6 @@
 # TODO: idea -- add weight for number of graph neighbors (connectedness)?
 # TODO: external checks e.g. very semantic details (be careful!)
 
-
 import spacy
 import json
 import sys
@@ -19,7 +18,7 @@ from nltk.corpus import stopwords
 from rake_nltk import Rake, Metric
 
 # load english language model
-nlp = spacy.load('en_core_web_trf',disable=['ner','textcat'])
+nlp = spacy.load('en_core_web_sm',disable=['ner','textcat'])
 
 # Input text, to be sent from frontend
 # There's definitely "prompt engineering" to be done
@@ -38,8 +37,8 @@ else:
 
 
 # text = """
-#         Blue-haired anime girl sitting in a field of violet flowers and grass at golden hour, camera angle slightly lower pointing up, she is wearing a straw hat and sundress, and the style is inspired by Monet
-#        """
+#          Blue-haired anime girl sitting in a field of violet flowers and grass at golden hour, camera angle slightly lower pointing up, she is wearing a straw hat and sundress, and the style is inspired by Monet
+#         """
 
 # remove whitespace
 text = text.strip()
@@ -100,7 +99,7 @@ def removeFromBack(string):
     return new_str.strip()
 
 STOP_WORDS = set(stopwords.words('english'))
-OK_WORDS = set('between', 'about', 'off', 'from', 'until', 'below', 'through', 'down', 'above', 'both', 'up', 'no', 'when', 'before', 'same', 'in', 'on', 'over', 'not', 'under', 'against')
+OK_WORDS = {'between', 'about', 'off', 'from', 'until', 'below', 'through', 'down', 'above', 'both', 'up', 'no', 'when', 'before', 'same', 'in', 'on', 'over', 'not', 'under', 'against'}
 REMOVE_FROM_FRONT = tuple(STOP_WORDS - OK_WORDS)
 REMOVE_FROM_BACK = tuple(STOP_WORDS)
 
