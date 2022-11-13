@@ -31,12 +31,27 @@ nlp = spacy.load('en_core_web_sm',disable=['ner','textcat'])
 
 text = sys.argv[1]
 
+OUTPUT_PATH = ""
+OUTPUT_FILENAME = "output.json"
+if sys.argv[2]:
+    OUTPUT_PATH = sys.argv[2]
+    if OUTPUT_PATH.endswith("/"):
+        OUTPUT_PATH += OUTPUT_FILENAME
+else:
+    OUTPUT_PATH = OUTPUT_FILENAME  # set output path to be 'output.json'
+
+
 # text = """
 #         Blue-haired anime girl sitting in a field of violet flowers and grass at golden hour, camera angle slightly lower pointing up, she is wearing a straw hat and sundress, and the style is inspired by Monet
 #        """
 
 # remove whitespace
 text = text.strip()
+
+if " " not in text:  # we have something that's one line!
+    with open(OUTPUT_PATH, "w") as f:
+        json.dump([text], f)
+    exit()
 
 # create spacy (tokenization, tagging, dependency, etc.)
 doc = nlp(text)
@@ -176,5 +191,5 @@ sorted_phrases = list(reversed(sorted(ansarr2, key = lambda x: x[1])))
 sorted_phrases_only = [x for x, y in sorted_phrases]
 
 # Write to JSON
-with open("output.json", "w") as f:
+with open(OUTPUT_PATH, "w") as f:
     json.dump(sorted_phrases_only, f)
