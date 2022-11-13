@@ -28,12 +28,15 @@ const Demo = () => {
   const [activePhraseIndex, setActivePhraseIndex] = useState<number>(0);
   const [phrases, setPhrases] = useState<string[]>([]);
 
+  const [error, setError] = useState<string>('');
   const [gathering, setGathering] = useState<boolean>(false);
 
   useEffect(() => console.log(images), [images]);
 
   const processPhrase = async () => {
     setGathering(true);
+    setError('');
+    setPhrases([]);
     const res = await fetch('/api/query', {
       method: 'POST',
       body: JSON.stringify({ query: search }),
@@ -66,7 +69,14 @@ const Demo = () => {
           }),
         });
         console.log(phrase);
-        dict[phrase] = await res.json();
+        if (res.ok) {
+          const data = await res.json();
+          dict[phrase] = data;
+        } else {
+          setError('Error: ' + res.statusText);
+          setGathering(false);
+          return;
+        }
       }
       console.log(dict);
       setImages(dict);
@@ -106,9 +116,14 @@ const Demo = () => {
             onPhraseClick={(i) => setActivePhraseIndex(i)}
           />
         </div>
+        {error && (
+          <div className="flex justify-center">
+            <div className="text-red-500 text-2xl font-bold">{error}</div>
+          </div>
+        )}
         {gathering ? (
-          <div className='flex justify-center'>
-            <PropagateLoader className=' scale-150' color='#e63282' />
+          <div className="flex justify-center">
+            <PropagateLoader className=" scale-150" color="#e63282" />
           </div>
         ) : (
           <div className="flex flex-row flex-wrap justify-center gap-2 select-none">
