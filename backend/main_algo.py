@@ -43,6 +43,12 @@ text = sys.argv[1]
 
 text = text.strip() # remove whitespace
 
+# Output file format
+# type res = {
+#   phrases: string[];
+#   toxic: boolean;
+# }
+
 
 # Check input message for toxicity
 TOXICITY_THRESHOLD = 0.7
@@ -52,14 +58,14 @@ for tox in toxicity_labels:
     if results[tox] > TOXICITY_THRESHOLD:
         print("Toxic message detected.")
         with open(OUTPUT_PATH, "w") as f:
-            json.dump([{'text': text, 'toxic': 1}], f)
+            json.dump({'phrases': [], 'toxic': 1}, f)
         exit()
 
 
 # Special case: single word as input
 if " " not in text:  # we have something that's one line!
     with open(OUTPUT_PATH, "w") as f:
-        json.dump([text], f)
+        json.dump({'phrases': [text], 'toxic': 0}, f)
     exit()
 
 
@@ -279,4 +285,4 @@ sorted_phrases_only = [x for x, y in sorted_phrases]
 
 # Write to JSON
 with open(OUTPUT_PATH, "w") as f:
-    json.dump(sorted_phrases_only, f)
+    json.dump({'phrases': sorted_phrases_only, 'toxic': 0}, f)
