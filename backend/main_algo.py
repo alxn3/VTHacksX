@@ -148,9 +148,12 @@ REMOVE_FROM_BACK = set(STOP_WORDS)
 def removeFromFront(string):
     temp = string.split(" ")
     i = 0
-    while temp[i] in REMOVE_FROM_FRONT:
+    while i < len(temp) and temp[i] in REMOVE_FROM_FRONT:
         i += 1
-    temp = temp[i:]
+    if i == len(temp):
+        temp = []
+    else:
+        temp = temp[i:]
     new_str = " ".join(temp).strip()
     return new_str
 
@@ -158,9 +161,12 @@ def removeFromFront(string):
 def removeFromBack(string):
     temp = string.split(" ")
     i = len(temp) - 1
-    while temp[i] in REMOVE_FROM_BACK:
+    while i >= 0 and temp[i] in REMOVE_FROM_BACK:
         i -= 1
-    temp = temp[:i+1]
+    if i == -1:
+        temp = []
+    else:
+        temp = temp[:i+1]
     new_str = " ".join(temp).strip()
     return new_str
 
@@ -180,7 +186,11 @@ for chunk in doc.noun_chunks:
         # print(chunk.text, chunk.root.head.text, chunk.root.pos_)
     # print(chunk.text, chunk.root.head.text, " | ", chunk.root.dep_, chunk.root.text)
     ans = removeFromFront(ans)
+    if ans == "":
+        continue
     ans = removeFromBack(ans)
+    if ans == "":
+        continue
     ansarr.append(ans)
 
 r = Rake(ranking_metric=Metric.WORD_DEGREE, min_length=2)
