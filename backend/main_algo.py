@@ -1,29 +1,25 @@
-# TODO: apply RAKE to see if determinants drop off
-# TODO: spaCy Matcher object
-# TODO: do stop words matter? why am I still here?
-
-# TODO: find set of segmentations for text
-# TODO: creating ranking for best N segmentations
-
-# TODO: idea -- rank chunks with capitals higher
-# TODO: idea -- some weight (not as much) for longer noun chunks
-# TODO: idea -- add weight for number of graph neighbors (connectedness)?
-
-# TODO: external checks e.g. very semantic details (be careful!)
+# TODO: prune preposition potpourri and bad determiners (remove preposition if after)
 # TODO: implement toxicity checking
+
+# TODO: do stop words matter? why am I still here?
+# TODO: creating ranking for best N segmentations
+# TODO: idea -- add weight for number of graph neighbors (connectedness)?
+# TODO: external checks e.g. very semantic details (be careful!)
+
 
 import spacy
 import json
 import sys
 # from spacy import displacy 
 
-# import nltk
+import nltk
+from nltk.corpus import stopwords
 # nltk.download('stopwords')
 # nltk.download('punkt')
 from rake_nltk import Rake, Metric
 
 # load english language model
-nlp = spacy.load('en_core_web_sm',disable=['ner','textcat'])
+nlp = spacy.load('en_core_web_trf',disable=['ner','textcat'])
 
 # Input text, to be sent from frontend
 # There's definitely "prompt engineering" to be done
@@ -77,17 +73,56 @@ doc = nlp(text)
 
 # print()
 
+def remove_dups(string):
+    new_str = ""
+    arr = string.split(" ")
+    seen = set()
+
+    for word in arr:
+        if word in seen:
+            continue
+        new_str = new_str + word + " "
+        seen.add(word)
+    new_str = new_str.strip()
+    return new_str
+
+# Remove the first/last word from the string
+def removeFromFront(string):
+    temp = string.split(" ")
+    temp = temp[1:]
+    new_str = " ".join(temp)
+    return new_str.strip()
+
+def removeFromBack(string):
+    temp = string.split(" ")
+    temp = temp[:-1]
+    new_str = " ".join(temp)
+    return new_str.strip()
+
+STOP_WORDS = set(stopwords.words('english'))
+OK_WORDS = set('between', 'about', 'off', 'from', 'until', 'below', 'through', 'down', 'above', 'both', 'up', 'no', 'when', 'before', 'same', 'in', 'on', 'over', 'not', 'under', 'against')
+REMOVE_FROM_FRONT = tuple(STOP_WORDS - OK_WORDS)
+REMOVE_FROM_BACK = tuple(STOP_WORDS)
+
 # Get noun chunks
 ansarr = []
 for chunk in doc.noun_chunks:
     ans = ""
-    if chunk.root.dep_ == 'pobj' or chunk.root.dep_ == 'dobj':  # object of preposition or direct object
+
+    if chunk.text in chunk.root.head.text:  # handle duplicate cases
+        ans = chunk.text
+    elif chunk.root.dep_ == 'pobj' or chunk.root.dep_ == 'dobj':  # object of preposition or direct object
         ans = chunk.root.head.text + " " + chunk.text
         # print(chunk.root.head.text, chunk.text, chunk.root.pos_)
     else:
         ans = chunk.text + " " + chunk.root.head.text
         # print(chunk.text, chunk.root.head.text, chunk.root.pos_)
     # print(chunk.text, chunk.root.head.text, " | ", chunk.root.dep_, chunk.root.text)
+    if ans.startswith(REMOVE_FROM_FRONT):
+        ans = removeFromFront(ans)
+    if ans.endswith(REMOVE_FROM_BACK):
+        ans = removeFromBack(ans)
+
     ansarr.append(ans)
 
 r = Rake(ranking_metric=Metric.WORD_DEGREE, min_length=2)
