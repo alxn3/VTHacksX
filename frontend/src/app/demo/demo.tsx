@@ -4,8 +4,8 @@ import GradientOutlineButton from 'components/gradient-outline-button';
 import GradientText from 'components/gradient-text';
 import InputBox from 'components/input-box';
 import Nav from 'components/nav';
-import { ReferenceContext, ReferenceProvider } from 'context/reference-context';
-import { useContext, useEffect, useState } from 'react';
+import { ReferenceProvider } from 'context/reference-context';
+import { useEffect, useState } from 'react';
 import { PropagateLoader } from 'react-spinners';
 import { ImageData } from 'types/image-data';
 import ImageResult from './image-result';
@@ -31,8 +31,6 @@ const Demo = () => {
   const [error, setError] = useState<string>('');
   const [gathering, setGathering] = useState<boolean>(false);
 
-  useEffect(() => console.log(images), [images]);
-
   const processPhrase = async () => {
     setGathering(true);
     setError('');
@@ -45,10 +43,17 @@ const Demo = () => {
       },
     });
     const data = await res.json();
-    setPhrases(data);
+    if (data.toxic) {
+      setError('Toxic phrase detected. Please try again.');
+      setGathering(false);
+    } else {
+      setPhrases(data.phrases);
+    }
   };
 
   useEffect(() => {
+    if (!phrases.length) return;
+
     setActivePhraseIndex(0);
 
     const queryPhrases = async () => {
@@ -82,7 +87,6 @@ const Demo = () => {
       setImages(dict);
       setGathering(false);
     };
-
     queryPhrases();
   }, [phrases]);
 
@@ -93,12 +97,12 @@ const Demo = () => {
       </div>
       <div className="w-[min(var(--content-width),var(--max-content-width))] min-h-screen mx-auto">
         <div className="flex flex-col items-center justify-center p-4">
-          <GradientText className="mx-auto text-[5em] font-extrabold text-center font-bold my-[25vh]">
+          <GradientText className="mx-auto text-[5em] font-extrabold text-center my-[25vh]">
             Reference Generator
           </GradientText>
           <div className="flex text-[1.5em] w-3/4 gap-4">
             <InputBox
-              className="flex-1 "
+              className="flex-1"
               placeholder="Insert a prompt!"
               onChange={(e) => setSearch(e.target.value)}
               onEnter={processPhrase}
