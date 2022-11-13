@@ -12,7 +12,7 @@ import { MdLibraryBooks } from 'react-icons/md';
 import InputBox from 'components/input-box';
 import { useState } from 'react';
 
-// import { db } from 'firebase/firebaseConfig';
+import { db } from 'firebase/firebaseConfig';
 import {
   getFirestore,
   collection,
@@ -28,8 +28,7 @@ import Footer from 'components/footer';
 const regexExp =
   /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi;
 
-// const emailsRef = collection(db, 'waitlist-emails');
-const emailsRef = undefined;
+const emailsRef = collection(db, 'waitlist-emails');
 
 const Landing = () => {
   const [email, setEmail] = useState('');

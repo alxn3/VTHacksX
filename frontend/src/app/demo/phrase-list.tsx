@@ -15,8 +15,8 @@ const PhraseList = ({ phrases, onPhraseClick, active, className }: Props) => {
       {phrases?.map((phrase, i) => (
         <div
           key={i}
-          className={` whitespace-nowrap py-1 px-3 rounded-full bg-white border-black dark:bg-black dark:border-white border-[1px] cursor-pointer hover:bg-primary-200/40 ${
-            active === i ? 'bg-primary-200/40' : ''
+          className={` whitespace-nowrap py-1 px-3 rounded-full bg-white border-black dark:bg-black dark:border-white border-[1px] cursor-pointer dark:hover:bg-primary-200/40 hover:bg-primary-200/40 ${
+            active === i ? 'bg-primary-200/40 dark:bg-primary-200/40' : ''
           }`}
           onClick={() => onPhraseClick && onPhraseClick(i)}
         >

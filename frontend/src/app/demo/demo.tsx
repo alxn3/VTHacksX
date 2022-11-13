@@ -6,6 +6,7 @@ import InputBox from 'components/input-box';
 import Nav from 'components/nav';
 import { ReferenceContext, ReferenceProvider } from 'context/reference-context';
 import { useContext, useEffect, useState } from 'react';
+import { PropagateLoader } from 'react-spinners';
 import { ImageData } from 'types/image-data';
 import ImageResult from './image-result';
 import PhraseList from './phrase-list';
@@ -27,9 +28,12 @@ const Demo = () => {
   const [activePhraseIndex, setActivePhraseIndex] = useState<number>(0);
   const [phrases, setPhrases] = useState<string[]>([]);
 
+  const [gathering, setGathering] = useState<boolean>(false);
+
   useEffect(() => console.log(images), [images]);
 
   const processPhrase = async () => {
+    setGathering(true);
     const res = await fetch('/api/query', {
       method: 'POST',
       body: JSON.stringify({ query: search }),
@@ -66,6 +70,7 @@ const Demo = () => {
       }
       console.log(dict);
       setImages(dict);
+      setGathering(false);
     };
 
     queryPhrases();
@@ -101,19 +106,25 @@ const Demo = () => {
             onPhraseClick={(i) => setActivePhraseIndex(i)}
           />
         </div>
-        <div className="flex flex-row flex-wrap justify-center gap-2 select-none">
-          {images[phrases[activePhraseIndex]]?.map((img, i) => (
-            <ImageResult
-              key={i}
-              className="h-[10em]"
-              onClick={() => {
-                setFocusedImage(img.url);
-                setFocused(true);
-              }}
-              data={img}
-            />
-          ))}
-        </div>
+        {gathering ? (
+          <div className='flex justify-center'>
+            <PropagateLoader className=' scale-150' color='#e63282' />
+          </div>
+        ) : (
+          <div className="flex flex-row flex-wrap justify-center gap-2 select-none">
+            {images[phrases[activePhraseIndex]]?.map((img, i) => (
+              <ImageResult
+                key={i}
+                className="h-[10em]"
+                onClick={() => {
+                  setFocusedImage(img.url);
+                  setFocused(true);
+                }}
+                data={img}
+              />
+            ))}
+          </div>
+        )}
       </div>
       <div className="h-full">
         <div className="fixed top-[10%] right-[calc((100%-min(var(--content-width),var(--max-content-width)))/2)] z-20">
