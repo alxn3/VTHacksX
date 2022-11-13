@@ -1,12 +1,14 @@
-# TODO: prune preposition potpourri and bad determiners (remove preposition if after)
-# TODO: implement toxicity checking
-
+# TODO: Failure modes
+# - Adjective (0+) + noun
+# - Noun directly following prepositional phrase
+# - Remove verb by itself (?)
 # TODO: do stop words matter? why am I still here?
 # TODO: creating ranking for best N segmentations
 # TODO: idea -- add weight for number of graph neighbors (connectedness)?
 # TODO: external checks e.g. very semantic details (be careful!)
 
 import spacy
+# from spacy.matcher import Matcher
 import json
 import sys
 # from spacy import displacy 
@@ -16,16 +18,10 @@ from nltk.corpus import stopwords
 # nltk.download('stopwords')
 # nltk.download('punkt')
 from rake_nltk import Rake, Metric
+from detoxify import Detoxify
 
-# load english language model
-nlp = spacy.load('en_core_web_sm',disable=['ner','textcat'])
 
-# Input text, to be sent from frontend
-# There's definitely "prompt engineering" to be done
-# precondition: assume that text is capped at some amount of characters
-
-text = sys.argv[1]
-
+# Start by setting output file w/ defaults
 OUTPUT_PATH = ""
 OUTPUT_FILENAME = "output.json"
 if len(sys.argv) == 3:  # there is a second argument
@@ -36,17 +32,68 @@ else:
     OUTPUT_PATH = OUTPUT_FILENAME  # set output path to be 'output.json'
 
 
+# Input text, to be sent from frontend - there's definitely "prompt engineering" to be done
+# precondition: assume that text is capped at some amount of characters
+
+text = sys.argv[1]
+
 # text = """
 #          Blue-haired anime girl sitting in a field of violet flowers and grass at golden hour, camera angle slightly lower pointing up, she is wearing a straw hat and sundress, and the style is inspired by Monet
 #         """
 
-# remove whitespace
-text = text.strip()
+text = text.strip() # remove whitespace
 
+
+# Check input message for toxicity
+TOXICITY_THRESHOLD = 0.7
+results = Detoxify('original').predict(text)
+toxicity_labels = ["toxicity", "severe_toxicity", "obscene", "threat", "insult", "identity_attack"]
+for tox in toxicity_labels:
+    if results[tox] > TOXICITY_THRESHOLD:
+        print("Toxic message detected.")
+        with open(OUTPUT_PATH, "w") as f:
+            json.dump([{'text': text, 'toxic': 1}], f)
+        exit()
+
+
+# Special case: single word as input
 if " " not in text:  # we have something that's one line!
     with open(OUTPUT_PATH, "w") as f:
         json.dump([text], f)
     exit()
+
+
+# Now we can actually start.
+# load english language model
+nlp = spacy.load('en_core_web_sm',disable=['ner','textcat'])
+# matcher = Matcher(nlp.vocab)
+
+# # Use regex to match particular sets of common word groupings users would want
+# matched_sents = []  # Collect data of matched sentences to be returned
+
+# def collect_sents(matcher, doc, i, matches):
+#     match_id, start, end = matches[i]
+#     span = doc[start:end]  # Matched span
+#     sent = span.sent  # Sentence containing matched span
+#     # Append mock entity for match in displaCy style to matched_sents
+#     # get the match span by ofsetting the start and end of the span with the
+#     # start and end of the sentence in the doc
+#     match_ents = [{
+#         "start": span.start_char - sent.start_char,
+#         "end": span.end_char - sent.start_char,
+#         "label": "MATCH",
+#     }]
+#     matched_sents.append({"text": sent.text, "ents": match_ents})
+
+# # pattern = [{"LOWER": "facebook"}, {"LEMMA": "be"}, {"POS": "ADV", "OP": "*"},
+# #            {"POS": "ADJ"}]
+# pattern = [{"POS": "ADJ", "OP": "*"}, {"POS": "NOUN", "OP": "+"}]
+# matcher.add("adjs_nouns", [pattern], on_match=collect_sents)  # add pattern
+# doc = nlp(text)
+# matches = matcher(doc)
+
+# # The yields?
+# print(matched_sents)
 
 # create spacy (tokenization, tagging, dependency, etc.)
 doc = nlp(text)
@@ -72,44 +119,53 @@ doc = nlp(text)
 
 # print()
 
-def remove_dups(string):
-    new_str = ""
-    arr = string.split(" ")
-    seen = set()
+# def remove_dups(string):
+#     new_str = ""
+#     arr = string.split(" ")
+#     seen = set()
 
-    for word in arr:
-        if word in seen:
-            continue
-        new_str = new_str + word + " "
-        seen.add(word)
-    new_str = new_str.strip()
-    return new_str
+#     for word in arr:
+#         if word in seen:
+#             continue
+#         new_str = new_str + word + " "
+#         seen.add(word)
+#     new_str = new_str.strip()
+#     return new_str
+
+STOP_WORDS = set(stopwords.words('english'))
+OK_WORDS = {'between', 'about', 'off', 'from', 'until', 'below', 'through', 'down', 'above', 'both', 'up', 'no', 'when', 'before', 'same', 'in', 'on', 'over', 'not', 'under', 'against'}
+REMOVE_FROM_FRONT = set(STOP_WORDS - OK_WORDS)
+REMOVE_FROM_BACK = set(STOP_WORDS)
+
 
 # Remove the first/last word from the string
 def removeFromFront(string):
     temp = string.split(" ")
-    temp = temp[1:]
-    new_str = " ".join(temp)
-    return new_str.strip()
+    i = 0
+    while temp[i] in REMOVE_FROM_FRONT:
+        i += 1
+    temp = temp[i:]
+    new_str = " ".join(temp).strip()
+    return new_str
+
 
 def removeFromBack(string):
     temp = string.split(" ")
-    temp = temp[:-1]
-    new_str = " ".join(temp)
-    return new_str.strip()
+    i = len(temp) - 1
+    while temp[i] in REMOVE_FROM_BACK:
+        i -= 1
+    temp = temp[:i+1]
+    new_str = " ".join(temp).strip()
+    return new_str
 
-STOP_WORDS = set(stopwords.words('english'))
-OK_WORDS = {'between', 'about', 'off', 'from', 'until', 'below', 'through', 'down', 'above', 'both', 'up', 'no', 'when', 'before', 'same', 'in', 'on', 'over', 'not', 'under', 'against'}
-REMOVE_FROM_FRONT = tuple(STOP_WORDS - OK_WORDS)
-REMOVE_FROM_BACK = tuple(STOP_WORDS)
 
 # Get noun chunks
 ansarr = []
 for chunk in doc.noun_chunks:
     ans = ""
 
-    if chunk.text in chunk.root.head.text:  # handle duplicate cases
-        ans = chunk.text
+    if chunk.root.head.text in chunk.text:  # handle duplicate cases
+        ans = chunk.root.head.text
     elif chunk.root.dep_ == 'pobj' or chunk.root.dep_ == 'dobj':  # object of preposition or direct object
         ans = chunk.root.head.text + " " + chunk.text
         # print(chunk.root.head.text, chunk.text, chunk.root.pos_)
@@ -117,11 +173,8 @@ for chunk in doc.noun_chunks:
         ans = chunk.text + " " + chunk.root.head.text
         # print(chunk.text, chunk.root.head.text, chunk.root.pos_)
     # print(chunk.text, chunk.root.head.text, " | ", chunk.root.dep_, chunk.root.text)
-    if ans.startswith(REMOVE_FROM_FRONT):
-        ans = removeFromFront(ans)
-    if ans.endswith(REMOVE_FROM_BACK):
-        ans = removeFromBack(ans)
-
+    ans = removeFromFront(ans)
+    ans = removeFromBack(ans)
     ansarr.append(ans)
 
 r = Rake(ranking_metric=Metric.WORD_DEGREE, min_length=2)
