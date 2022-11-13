@@ -33,7 +33,7 @@ text = sys.argv[1]
 
 OUTPUT_PATH = ""
 OUTPUT_FILENAME = "output.json"
-if sys.argv[2]:
+if len(sys.argv) == 3:  # there is a second argument
     OUTPUT_PATH = sys.argv[2]
     if OUTPUT_PATH.endswith("/"):
         OUTPUT_PATH += OUTPUT_FILENAME
